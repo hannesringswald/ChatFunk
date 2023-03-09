@@ -47,7 +47,7 @@ class ChatServer:
     def stop(self):
         self.running = False
         for client_socket in self.clients.values():
-            client_socket.close()
+            client_socket.quit()
         self.server_socket.close()
 
     def handle_client(self, client_socket, address):
@@ -94,7 +94,7 @@ class ChatServer:
                         if len(other_clients) != 0:
                             client_socket.sendall("\n".join(other_clients).encode())
                         else:
-                            client_socket.sendall(b"Only you at this time!")
+                            client_socket.sendall(b"Only you at the moment!")
 
                 elif command == "CHECK":
                     with self.lock:
@@ -115,7 +115,7 @@ class ChatServer:
                         if client_id in self.message_queue:
                             del self.message_queue[client_id]
                         print(f"Client '{client_id}' disconnected.\n")
-                    client_socket.close()
+                    client_socket.quit()
                     return
 
             except ConnectionResetError:
@@ -136,4 +136,4 @@ if __name__ == '__main__':
     server = ChatServer(server_ip, server_port)
     server.start()
 
-# TODO: KeyboardInterrupt muss beenden obwohl Clients im System
+# TODO: KeyboardInterrupt muss beenden obwohl Clients im System, innit parameter weg machen

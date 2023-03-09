@@ -53,10 +53,10 @@ class ChatClient:
     def disconnect(self):
         request = "DISCONNECT"
         self.client_socket.send(request.encode())
-        self.client_socket.close()
+        self.client_socket.quit()
         print(f"Closing down Session.\nGoodbye {self.client_id}!")
 
-    def close(self):
+    def quit(self):
         print("Old messages:")
         self.check_messages()
         if self.client_socket:
@@ -99,7 +99,9 @@ if __name__ == "__main__":
         elif selection == "3":
             chat_client.check_messages()
         elif selection == "4":
-            chat_client.close()
-            sys.exit(0)
+            chat_client.quit()
+            sys.exit()
         else:
             print("Invalid selection. Please try again.")
+
+# TODO: disconnect und quit

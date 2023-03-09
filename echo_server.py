@@ -30,7 +30,7 @@ def threaded_client(connection, address):
         reply = f"Echo to {username}: {message}"
         connection.send(str.encode(reply))
     print(f"Closing connection to {address[0]}:{address[1]}")
-    connection.close()
+    connection.quit()
 
 
 if __name__ == "__main__":
