@@ -94,7 +94,7 @@ class ChatServer:
                         if len(other_clients) != 0:
                             client_socket.sendall("\n".join(other_clients).encode())
                         else:
-                            client_socket.sendall("Only you at this time!".encode())
+                            client_socket.sendall(b"Only you at this time!")
 
                 elif command == "CHECK":
                     with self.lock:
