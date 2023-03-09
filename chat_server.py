@@ -15,7 +15,6 @@ class ChatServer:
         self.running = False
 
     def start(self):
-        self.running = True
         try:
             self.server_socket.bind((self.ip_addr, self.port))
         except socket.error as e:
@@ -24,6 +23,7 @@ class ChatServer:
             sys.exit(1)
         self.server_socket.listen()
         self.server_socket.settimeout(1)
+        self.running = True
         print(f"Listening on {self.ip_addr}:{self.port}")
         threads = []
         try:
@@ -42,7 +42,7 @@ class ChatServer:
                 thread.join()
         finally:
             self.stop()
-            sys.exit(0)
+            sys.exit()
 
     def stop(self):
         self.running = False
