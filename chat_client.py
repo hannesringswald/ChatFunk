@@ -45,8 +45,8 @@ class ChatClient:
         request = "CHECK"
         self.client_socket.send(request.encode())
         response = self.client_socket.recv(1024).decode()
-        if response == "NO_MSG":
-            print("No messages\n")
+        if response == "EMPTY":
+            print("No messages")
         else:
             print(response)
 

@@ -91,7 +91,10 @@ class ChatServer:
                 elif command == "LIST":
                     with self.lock:
                         other_clients = [cid for cid in self.clients if cid != client_id]
-                        client_socket.sendall("\n".join(other_clients).encode())
+                        if len(other_clients) != 0:
+                            client_socket.sendall("\n".join(other_clients).encode())
+                        else:
+                            client_socket.sendall("Only you at this time!".encode())
 
                 elif command == "CHECK":
                     with self.lock:
@@ -104,7 +107,7 @@ class ChatServer:
                             client_socket.sendall("\n".join(messages).encode())
                             del self.message_queue[client_id]
                         else:
-                            client_socket.sendall(b"NO_MSG")
+                            client_socket.sendall(b"EMPTY")
 
                 elif command == "DISCONNECT":
                     with self.lock:
@@ -126,8 +129,11 @@ class ChatServer:
 
 if __name__ == '__main__':
     print("===== Start Server =====")
-    server_ip = input("IP-Address: ") or socket.gethostbyname(socket.gethostname())
-    server_port = int(input("Port: ") or "2900")
+    default_ip = socket.gethostbyname(socket.gethostname())
+    server_ip = input(f"IP-Address (local, default={default_ip}): ") or default_ip
+    server_port = int(input("Port (default=2900): ") or "2900")
 
     server = ChatServer(server_ip, server_port)
     server.start()
+
+# TODO: KeyboardInterrupt muss beenden obwohl Clients im System
