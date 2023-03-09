@@ -34,7 +34,7 @@ class ChatClient:
         request = "LIST"
         self.client_socket.send(request.encode())
         response = self.client_socket.recv(1024).decode()
-        print(f"Other clients logged in:\n {response}")
+        print(f"Other clients logged in:\n{response}")
 
     def send_message(self, recipient, message):
         request = f"SEND {recipient} {message}"
@@ -47,12 +47,11 @@ class ChatClient:
         if response == "NO_MSG":
             print("No messages\n")
         else:
-            sender, message = response.split(" ", 1)
-            print(f"{sender}: {message}\n")
+            print(response)
 
     def close(self):
         print("Old messages:")
-        chat_client.check_messages()
+        self.check_messages()
         if self.client_socket:
             self.client_socket.close()
 

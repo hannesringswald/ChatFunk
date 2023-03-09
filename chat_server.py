@@ -25,37 +25,46 @@ class ChatServer:
         self.server_socket.listen()
         self.server_socket.settimeout(1)
         print(f"Listening on {self.ip_addr}:{self.port}")
+        threads = []
         try:
             while self.running:
                 try:
                     client_socket, address = self.server_socket.accept()
-                    client_thread = Thread(target=self.handle_client, args=(client_socket, address), daemon=True)
+                    client_thread = Thread(target=self.handle_client, args=(client_socket, address))
                     client_thread.start()
+                    threads.append(client_thread)
                 except socket.timeout:
                     pass
         except KeyboardInterrupt:
             print("\nStopping server due to user request")
             self.running = False
+            for thread in threads:
+                thread.join()
         finally:
             self.stop()
+            sys.exit()
 
     def stop(self):
         self.running = False
         for client_socket in self.clients.values():
             client_socket.close()
         self.server_socket.close()
+        exit()
 
     def handle_client(self, client_socket, address):
-        client_id = client_socket.recv(1024).decode()
+        while True:
+            client_id = client_socket.recv(1024).decode()
+            if not client_id:
+                continue
 
-        with self.lock:
-            if client_id in self.clients:
-                client_socket.send(b"ERROR: Client ID already taken. Please choose another one.")
-                return
-            else:
-                self.clients[client_id] = client_socket
-                print(f"Client '{client_id}' connected from {address}\n")
-                client_socket.send(b"SUCCESS")
+            with self.lock:
+                if client_id in self.clients:
+                    client_socket.send(b"ERROR: Client ID already taken. Please choose another one.")
+                else:
+                    self.clients[client_id] = client_socket
+                    print(f"Client '{client_id}' connected from {address}\n")
+                    client_socket.send(b"SUCCESS")
+                    break
 
         while True:
             try:
@@ -72,7 +81,8 @@ class ChatServer:
                     recipient = parts[1]
                     msg = " ".join(parts[2:])
                     if recipient not in self.clients:
-                        client_socket.send(f"Error: No client with ID '{recipient}' found.\n".encode())
+                        # Message lost for unknown recipient
+                        pass
                     else:
                         with self.lock:
                             if recipient in self.message_queue:
@@ -90,12 +100,14 @@ class ChatServer:
                     with self.lock:
                         if client_id in self.message_queue:
                             queue = self.message_queue[client_id]
+                            messages = []
                             while not queue.empty():
                                 sender, msg = queue.get()
-                                client_socket.sendall(f"{sender} {msg}".encode())
+                                messages.append(f"{sender}: {msg}")
+                            client_socket.sendall("\n".join(messages).encode())
                             del self.message_queue[client_id]
                         else:
-                            client_socket.sendall(b"NO_MSG\n")
+                            client_socket.sendall(b"NO_MSG")
 
             except ConnectionResetError:
                 with self.lock:
