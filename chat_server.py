@@ -10,6 +10,7 @@ class ChatServer:
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.clients = {}
         self.lock = Lock()
+        self.message_queue = {}
         self.running = False
 
     def start(self):
@@ -49,12 +50,11 @@ class ChatServer:
         with self.lock:
             if client_id in self.clients:
                 client_socket.send(b"ERROR: Client ID already taken. Please choose another one.")
-                client_socket.close()
                 return
             else:
                 self.clients[client_id] = client_socket
-                print(f"Client '{client_id}' connected from {address}")
-                client_socket.send(b"Successfully registered.")
+                print(f"Client '{client_id}' connected from {address}\n")
+                client_socket.send(b"SUCCESS")
 
         while True:
             try:
@@ -66,34 +66,40 @@ class ChatServer:
                 parts = message.split(" ")
                 command = parts[0]
 
-                # TODO: Implement message routing to other clients
-                message_parts = message.split(" ", 2)
+                # Implement message routing to other clients and message queue
                 if command == "SEND":
-                    recipient = message_parts[1]
-                    msg = message_parts[2]
+                    recipient = parts[1]
+                    msg = " ".join(parts[2:])
                     if recipient not in self.clients:
-                        client_socket.send(f"Error: No client with ID '{recipient}' found.".encode())
+                        client_socket.send(f"Error: No client with ID '{recipient}' found.\n".encode())
                     else:
-                        self.clients[recipient].send(f"{client_id} says: {msg}".encode())
+                        with self.lock:
+                            if recipient in self.message_queue:
+                                self.message_queue[recipient].append((client_id, msg))
+                            else:
+                                self.message_queue[recipient] = [(client_id, msg)]
+                        # self.clients[recipient].send(f"{client_id}: {msg}".encode())
 
                 elif command == "LIST":
                     with self.lock:
                         other_clients = [cid for cid in self.clients if cid != client_id]
-                        client_socket.sendall(" ".join(other_clients).encode())
+                        client_socket.sendall("\n".join(other_clients).encode())
 
                 elif command == "CHECK":
                     with self.lock:
                         if client_id in self.message_queue:
-                            sender, msg = self.message_queue[client_id]
+                            for sender, msg in self.message_queue[client_id]:
+                                client_socket.sendall(f"{sender} {msg}".encode())
                             del self.message_queue[client_id]
-                            client_socket.sendall(f"{sender} {msg}".encode())
                         else:
-                            client_socket.sendall(b"NO MSG")
+                            client_socket.sendall(b"NO_MSG\n")
 
             except ConnectionResetError:
                 with self.lock:
                     del self.clients[client_id]
-                    print(f"Client '{client_id}' disconnected.")
+                    if client_id in self.message_queue:
+                        del self.message_queue[client_id]
+                    print(f"Client '{client_id}' disconnected.\n")
                 return
 
 
@@ -104,5 +110,3 @@ if __name__ == '__main__':
 
     server = ChatServer(server_ip, server_port)
     server.start()
-
-# TODO: Client ID fixxen und Nachrichtenspeicherung und Old Messages anpassen
