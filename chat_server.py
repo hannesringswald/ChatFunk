@@ -42,14 +42,13 @@ class ChatServer:
                 thread.join()
         finally:
             self.stop()
-            sys.exit()
+            sys.exit(0)
 
     def stop(self):
         self.running = False
         for client_socket in self.clients.values():
             client_socket.close()
         self.server_socket.close()
-        exit()
 
     def handle_client(self, client_socket, address):
         while True:
@@ -72,11 +71,9 @@ class ChatServer:
                 if not message:
                     continue
 
-                # Handle different message types
                 parts = message.split(" ")
                 command = parts[0]
 
-                # Implement message routing to other clients and message queue
                 if command == "SEND":
                     recipient = parts[1]
                     msg = " ".join(parts[2:])
@@ -108,6 +105,15 @@ class ChatServer:
                             del self.message_queue[client_id]
                         else:
                             client_socket.sendall(b"NO_MSG")
+
+                elif command == "DISCONNECT":
+                    with self.lock:
+                        del self.clients[client_id]
+                        if client_id in self.message_queue:
+                            del self.message_queue[client_id]
+                        print(f"Client '{client_id}' disconnected.\n")
+                    client_socket.close()
+                    return
 
             except ConnectionResetError:
                 with self.lock:
