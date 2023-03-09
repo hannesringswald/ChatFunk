@@ -1,6 +1,7 @@
 import socket
 import sys
 from threading import Thread, Lock
+from queue import Queue
 
 
 class ChatServer:
@@ -75,10 +76,10 @@ class ChatServer:
                     else:
                         with self.lock:
                             if recipient in self.message_queue:
-                                self.message_queue[recipient].append((client_id, msg))
+                                self.message_queue[recipient].put((client_id, msg))
                             else:
-                                self.message_queue[recipient] = [(client_id, msg)]
-                        # self.clients[recipient].send(f"{client_id}: {msg}".encode())
+                                self.message_queue[recipient] = Queue()
+                                self.message_queue[recipient].put((client_id, msg))
 
                 elif command == "LIST":
                     with self.lock:
@@ -88,7 +89,9 @@ class ChatServer:
                 elif command == "CHECK":
                     with self.lock:
                         if client_id in self.message_queue:
-                            for sender, msg in self.message_queue[client_id]:
+                            queue = self.message_queue[client_id]
+                            while not queue.empty():
+                                sender, msg = queue.get()
                                 client_socket.sendall(f"{sender} {msg}".encode())
                             del self.message_queue[client_id]
                         else:
