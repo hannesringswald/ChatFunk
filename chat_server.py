@@ -47,7 +47,7 @@ class ChatServer:
     def stop(self):
         self.running = False
         for client_socket in self.clients.values():
-            client_socket.quit()
+            client_socket.close()
         self.server_socket.close()
 
     def handle_client(self, client_socket, address):
@@ -115,7 +115,7 @@ class ChatServer:
                         if client_id in self.message_queue:
                             del self.message_queue[client_id]
                         print(f"Client '{client_id}' disconnected.\n")
-                    client_socket.quit()
+                    client_socket.close()
                     return
 
             except ConnectionResetError:

@@ -53,7 +53,7 @@ class ChatClient:
     def disconnect(self):
         request = "DISCONNECT"
         self.client_socket.send(request.encode())
-        self.client_socket.quit()
+        self.client_socket.close()
         print(f"Closing down Session.\nGoodbye {self.client_id}!")
 
     def quit(self):
