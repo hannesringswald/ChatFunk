@@ -93,7 +93,7 @@ if __name__ == "__main__":
             else:
                 msg = input("Your message: ")
                 if len(msg) > MAX_MSG_LENGTH:
-                    print("Message too long, please limit to 126 characters")
+                    print(f"Message too long, please limit to {MAX_MSG_LENGTH} characters")
                 else:
                     chat_client.send_message(recip, msg)
         elif selection == "3":
