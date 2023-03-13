@@ -30,11 +30,13 @@ class ChatServer:
         ip_addr (str): The IP address of the server.
         port (int): The port number to use for the server.
         clients (dict): A dictionary containing the clients currently connected
-        to the server. The keys are client IDs and the values are socket objects.
+                        to the server. The keys are client IDs and the values are
+                        socket objects.
         lock (threading.Lock): A lock used to ensure thread safety.
         message_queue (collections.defaultdict): A dictionary containing the
-        message queues for each connected client. The keys are client IDs and
-        the values are queue.Queue objects.
+                                                message queues for each connected
+                                                client. The keys are client IDs
+                                                and the values are queue.Queue objects.
         running (bool): A flag indicating whether the server is currently running.
     """
 
@@ -43,7 +45,7 @@ class ChatServer:
 
         Args:
             ip_addr (str): The IP address of the server (default is the local
-            machines IP address).
+                           machines IP address).
             port (int): The port number to use for the server (default is 2900).
         """
         self.ip_addr = ip_addr
@@ -143,9 +145,9 @@ class ChatServer:
 
         Args:
             client_socket (socket.socket): The socket object representing the
-            client connection.
+                                           client connection.
             address (tuple): A tuple containing the client's IP address and
-            port number.
+                             port number.
         """
         with client_socket:
             while True:

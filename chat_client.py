@@ -33,16 +33,16 @@ class ChatClient:
     server_ip (str): The IP address of the server.
     server_port (int): The port number of the server.
     client_socket (socket.socket): The socket object representing the client's
-    connection to the server.
+                                   connection to the server.
     client_id (str): The ID of the client.
     response_queue (Queue): A queue to store responses from the server.
     stop_event (threading.Event): An event to signal the response handling
-    thread to stop.
+                                  thread to stop.
     response_thread (threading.Thread): A thread to handle server messages.
 
     Methods:
     register(client_id): Registers the client with the server using the provided
-    client ID.
+                         client ID.
 
     """
     def __init__(self, server_ip):
