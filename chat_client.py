@@ -7,9 +7,6 @@ Usage example:
 
     $ python chat_client.py <server_ip>
 
-Attributes:
-    MAX_MSG_LENGTH (int): The maximum length of a message that can be sent.
-
 Authors:
     Alexander Riedlinger <alexander.riedlinger@student.dhbw-vs.de>
 """
@@ -19,7 +16,6 @@ import sys
 import threading
 from queue import Queue
 
-MAX_MSG_LENGTH = 126
 
 
 class ChatClient:
@@ -226,7 +222,7 @@ class ChatClient:
                         print("ERROR: You cannot send a message to yourself.")
                     else:
                         msg = input("Your message: ")
-                        if len(msg) > MAX_MSG_LENGTH:
+                        if len(msg) > 126:
                             print("ERROR: Message too long, please limit to 126 characters")
                         else:
                             self.send_message(recip, msg)
