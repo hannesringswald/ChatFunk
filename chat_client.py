@@ -199,7 +199,7 @@ class ChatClient:
 
         while not self.stop_event.is_set():
             print("====== Minimal Chat System ======")
-            print("1: other Clients logged in")
+            print("1: List other logged in clients")
             print("2: Send message")
             print("3: Check incoming messages")
             print("4: Quit")
