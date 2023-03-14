@@ -40,3 +40,24 @@ ChatClient --> ChatServer: Send/Receive messages
 ChatServer --> ChatClient: Send/Receive messages
 ChatServer --> UC7
 @enduml
+
+@startuml
+left to right direction
+actor User as user
+
+rectangle ChatClient {
+  usecase "Register" as UC1
+  usecase "List other clients" as UC2
+  usecase "Send message" as UC3
+  usecase "Check incoming messages" as UC4
+  usecase "Quit" as UC5
+
+
+  user --> UC1
+  user --> UC2
+  user --> UC3
+  user --> UC4
+  user --> UC5
+}
+
+@enduml
