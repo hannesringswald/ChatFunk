@@ -125,7 +125,8 @@ class ChatClient:
                 break
 
     def list_other_clients(self):
-        """Sends a request to the server to list all other clients currently logged in.
+        """Sends a "LIST" request to the server to list all other clients
+        currently logged in.
 
         Prints a formatted list of the other clients' IDs.
         """
@@ -135,7 +136,7 @@ class ChatClient:
         print(f"Other clients logged in:\n{response}")
 
     def send_message(self, recipient, message):
-        """Sends a message to the specified recipient.
+        """Sends a message to the specified recipient utilizing "SEND" request.
 
         Args:
             recipient (str): The ID of the client to send the message to.
@@ -146,7 +147,7 @@ class ChatClient:
         self.client_socket.send(request.encode())
 
     def check_messages(self):
-        """Sends a request to the server to check for new messages.
+        """Sends a "CHECK" request to the server to check for new messages.
 
         Prints any new messages that have been received since the last check.
         """
