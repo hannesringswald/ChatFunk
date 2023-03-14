@@ -17,7 +17,6 @@ import threading
 from queue import Queue
 
 
-
 class ChatClient:
     """
     A class representing a client for a chat application.
