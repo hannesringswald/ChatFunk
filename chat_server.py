@@ -5,9 +5,6 @@ server that allows multiple clients to connect and communicate with each other.
 
 Usage example:
 
-    with ChatServer(server_ip, server_port) as server:
-        server.start()
-
     $ python chat_server.py
 
 Authors:
