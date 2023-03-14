@@ -1,0 +1,147 @@
+@startuml
+left to right direction
+actor User as user
+
+rectangle ChatClient {
+  usecase "Register" as UC1
+  usecase "List other clients" as UC2
+  usecase "Send message" as UC3
+  usecase "Check incoming messages" as UC4
+  usecase "Quit" as UC5
+
+  UC1 --> UC2
+  UC2 --> UC3
+  UC3 --> UC4
+  UC4 --> UC5
+
+  user --> UC1
+  user --> UC2
+  user --> UC3
+  user --> UC4
+  user --> UC5
+}
+
+rectangle ChatServer {
+  usecase "Accept connections" as UC7
+  usecase "Listen for messages" as UC8
+  usecase "Send messages" as UC9
+  usecase "Handle disconnections" as UC10
+  usecase "Shutdown" as UC11
+
+  UC7 --> UC8
+  UC8 --> UC9
+  UC9 --> UC8
+  UC8 --> UC10
+  UC10 --> UC8
+  UC11 --> UC10
+}
+
+ChatClient --> ChatServer: Send/Receive messages
+ChatServer --> ChatClient: Send/Receive messages
+ChatServer --> UC7
+@enduml
+
+@startuml
+left to right direction
+actor User as user
+
+rectangle ChatClient {
+  usecase "Register" as UC1
+  usecase "List other clients" as UC2
+  usecase "Send message" as UC3
+  usecase "Check incoming messages" as UC4
+  usecase "Quit" as UC5
+
+
+  user --> UC1
+  user --> UC2
+  user --> UC3
+  user --> UC4
+  user --> UC5
+}
+
+@enduml
+
+@startuml
+title Chat Server Architecture
+
+class ChatServer {
+  - ip_addr: str
+  - port: int
+  - clients: dict
+  - lock: threading.Lock
+  - message_queue: dict
+  - running: bool
+  + __init__(ip_addr: str, port: int)
+  + start() -> None
+  + stop() -> None
+  + handle_client(client_socket: socket.socket, address: tuple) -> None
+}
+
+class ChatClient {
+  - server_ip: str
+  - server_port: int
+  - client_id: str
+  - client_socket: socket.socket
+  - response_queue: queue.Queue
+  - stop_event: threading.Event
+  + __init__(server_ip: str, server_port: int, client_id: str)
+  + register() -> bool
+  + handle_server_message() -> None
+  + list_other_clients() -> None
+  + send_message(recipient_id: str, message: str) -> None
+  + check_messages() -> None
+  + disconnect() -> None
+  + quit() -> None
+  + run() -> None
+}
+
+ChatClient --> ChatServer: connect
+ChatClient --> ChatServer: register, list_other_clients, send_message, check_messages, disconnect
+ChatServer --> ChatClient: response
+
+@enduml
+
+
+@startuml
+title Chat Server Architecture
+
+class ChatServer {
+  - ip_addr: str
+  - port: int
+  - clients: dict
+  - lock: threading.Lock
+  - message_queue: dict
+  - running: bool
+  + __init__(ip_addr: str, port: int)
+  + start() -> None
+  + stop() -> None
+  + handle_client(client_socket: socket.socket, address: tuple) -> None
+}
+
+class ChatClient {
+  - server_ip: str
+  - server_port: int
+  - client_id: str
+  - client_socket: socket.socket
+  - response_queue: queue.Queue
+  - stop_event: threading.Event
+  + __init__(server_ip: str, server_port: int, client_id: str)
+  + register() -> bool
+  + handle_server_message() -> None
+  + list_other_clients() -> None
+  + send_message(recipient_id: str, message: str) -> None
+  + check_messages() -> None
+  + disconnect() -> None
+  + quit() -> None
+  + run() -> None
+}
+
+ChatClient -> ChatServer: register
+ChatClient -> ChatServer: list_other_clients
+ChatClient -> ChatServer: send_message
+ChatClient -> ChatServer: check_messages
+ChatClient -> ChatServer: disconnect
+ChatServer -> ChatClient: response
+
+@enduml
