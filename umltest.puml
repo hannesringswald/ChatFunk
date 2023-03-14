@@ -93,9 +93,9 @@ class ChatServer {
   - message_queue: dict
   - running: bool
   + __init__(ip_addr: str, port: int)
-  + start() -> None
-  + stop() -> None
-  + handle_client(client_socket: socket.socket, address: tuple) -> None
+  + start()
+  + stop()
+  + handle_client(client_socket: socket.socket, address: tuple)
 }
 
 class ChatClient {
@@ -107,13 +107,13 @@ class ChatClient {
   - stop_event: threading.Event
   + __init__(server_ip: str, server_port: int, client_id: str)
   + register() -> bool
-  + handle_server_message() -> None
-  + list_other_clients() -> None
-  + send_message(recipient_id: str, message: str) -> None
-  + check_messages() -> None
-  + disconnect() -> None
-  + quit() -> None
-  + run() -> None
+  + handle_server_message()
+  + list_other_clients()
+  + send_message(recipient_id: str, message: str)
+  + check_messages()
+  + disconnect()
+  + quit()
+  + run()
 }
 
 ChatClient --> ChatServer: connect
@@ -134,9 +134,9 @@ class ChatServer {
   - message_queue: dict
   - running: bool
   + __init__(ip_addr: str, port: int)
-  + start() -> None
-  + stop() -> None
-  + handle_client(client_socket: socket.socket, address: tuple) -> None
+  + start()
+  + stop()
+  + handle_client(client_socket: socket.socket, address: tuple)
 }
 
 class ChatClient {
@@ -148,13 +148,13 @@ class ChatClient {
   - stop_event: threading.Event
   + __init__(server_ip: str, server_port: int, client_id: str)
   + register() -> bool
-  + handle_server_message() -> None
-  + list_other_clients() -> None
-  + send_message(recipient_id: str, message: str) -> None
-  + check_messages() -> None
-  + disconnect() -> None
-  + quit() -> None
-  + run() -> None
+  + handle_server_message()
+  + list_other_clients()
+  + send_message(recipient_id: str, message: str)
+  + check_messages()
+  + disconnect()
+  + quit()
+  + run()
 }
 
 ChatClient -> ChatServer: register
