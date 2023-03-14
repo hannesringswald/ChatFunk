@@ -1,9 +1,9 @@
+
+
 import socket
 import sys
 import threading
 from queue import Queue
-
-MAX_MSG_LENGTH = 126
 
 
 class ChatClient:
@@ -14,7 +14,8 @@ class ChatClient:
         self.client_id = None
         self.response_queue = Queue()
         self.stop_event = threading.Event()
-        self.response_thread = threading.Thread(target=self.handle_server_message, daemon=True)
+        self.response_thread = threading.Thread(target=self.handle_server_message,
+                                                daemon=True)
 
     def register(self, client_id):
         try:
@@ -37,7 +38,8 @@ class ChatClient:
                 print(f"{response}")
                 return False
         except (TimeoutError, ConnectionError):
-            print("ERROR: Connection to server failed. Make sure the server is running and try again.")
+            print("ERROR: Connection to server failed. Make sure the server is "
+                  "running and try again.")
             sys.exit(1)
 
     def handle_server_message(self):
@@ -51,7 +53,8 @@ class ChatClient:
 
                 if message == "SHUTDOWN":
                     print(
-                        "\n!!! You have been disconnected from the server because it has been shut down. Press any key to exit.!!!")
+                        "\n!!! You have been disconnected from the server because"
+                        " it has been shut down. Press any key to exit.!!!")
                     self.stop_event.set()
                     self.disconnect()
                     break
@@ -61,7 +64,9 @@ class ChatClient:
                 # If a timeout occurs, just continue the loop
                 continue
             except ConnectionResetError:
-                print("\n!!! Unexpectedly lost connection to server. Press any key to exit.!!!")
+                print(
+                    "\n!!! Unexpectedly lost connection to server. "
+                    "Press any key to exit.!!!")
                 self.stop_event.set()
                 break
 
@@ -103,40 +108,42 @@ class ChatClient:
 
         # Start a separate thread to listen for server messages
         self.response_thread.start()
+
         while not self.stop_event.is_set():
             print("====== Minimal Chat System ======")
             print("1: other Clients logged in")
             print("2: Send message")
             print("3: Check incoming messages")
             print("4: Quit")
+
             selection = input("Your selection: ")
 
             if self.stop_event.is_set():
                 break
             else:
                 if selection == "1":
-                    chat_client.list_other_clients()
+                    self.list_other_clients()
                 elif selection == "2":
                     recip = input("Send message to: ")
-                    if recip == chat_client.client_id:
+                    if recip == self.client_id:
                         print("ERROR: You cannot send a message to yourself.")
                     else:
                         msg = input("Your message: ")
-                        if len(msg) > MAX_MSG_LENGTH:
+                        if len(msg) > 126:
                             print("ERROR: Message too long, please limit to 126 characters")
                         else:
-                            chat_client.send_message(recip, msg)
+                            self.send_message(recip, msg)
                 elif selection == "3":
-                    chat_client.check_messages()
+                    self.check_messages()
                 elif selection == "4":
-                    chat_client.quit()
+                    self.quit()
                 else:
                     print("Invalid selection. Please try again.")
 
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python undoc_chat_client.py <server_ip>")
+        print("Usage: python chat_client.py <server_ip>")
         sys.exit(1)
 
     serv_ip = sys.argv[1]

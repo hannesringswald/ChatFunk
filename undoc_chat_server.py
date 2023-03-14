@@ -44,7 +44,8 @@ class ChatServer:
             while self.running:
                 try:
                     client_socket, address = self.server_socket.accept()
-                    client_thread = Thread(target=self.handle_client, args=(client_socket, address))
+                    client_thread = Thread(target=self.handle_client,
+                                           args=(client_socket, address))
                     client_thread.start()
                     threads.append(client_thread)
                 except socket.timeout:
@@ -60,7 +61,6 @@ class ChatServer:
         self.running = False
         countdown = 5
 
-        # Send a SHUTDOWN message to each client and wait for them to disconnect
         with self.lock:
             for client_id, client_socket in self.clients.items():
                 try:
@@ -68,7 +68,6 @@ class ChatServer:
                 except Exception as e:
                     print(f"Error sending SHUTDOWN to client '{client_id}': {e}")
 
-            # Wait for the specified time, displaying a countdown on the server console
             while countdown > 0:
                 print(f"Server shutting down in {countdown} seconds...")
                 time.sleep(1)
@@ -77,9 +76,9 @@ class ChatServer:
             # Make sure everything is closed properly
             for client_socket in self.clients.values():
                 with client_socket:
-                    pass  # Send nothing, just close the socket
+                    pass
             with self.server_socket:
-                pass  # Send nothing, just close the socket
+                pass
 
     def handle_client(self, client_socket, address):
         with client_socket:
@@ -90,7 +89,8 @@ class ChatServer:
 
                 with self.lock:
                     if client_id in self.clients:
-                        client_socket.send(b"ERROR: Client ID already taken. Please choose another one.")
+                        client_socket.send(b"ERROR: Client ID already taken. "
+                                           b"Please choose another one.")
                     else:
                         self.clients[client_id] = client_socket
                         print(f"Client '{client_id}' connected from {address}\n")
@@ -118,9 +118,11 @@ class ChatServer:
 
                     elif command == "LIST":
                         with self.lock:
-                            other_clients = [cid for cid in self.clients if cid != client_id]
+                            other_clients = [cid for cid in self.clients if cid
+                                             != client_id]
                             if len(other_clients) != 0:
-                                client_socket.sendall("\n".join(other_clients).encode())
+                                client_socket.sendall("\n".join(other_clients)
+                                                      .encode())
                             else:
                                 client_socket.sendall(b"Only you at the moment!")
 
