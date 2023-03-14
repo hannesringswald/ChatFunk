@@ -34,11 +34,6 @@ class ChatClient:
     stop_event (threading.Event): An event to signal the response handling
                                   thread to stop.
     response_thread (threading.Thread): A thread to handle server messages.
-
-    Methods:
-    register(client_id): Registers the client with the server using the provided
-                         client ID.
-
     """
     def __init__(self, server_ip):
         """

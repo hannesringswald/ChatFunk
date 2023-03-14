@@ -83,8 +83,7 @@ rectangle ChatClient {
 @enduml
 
 @startuml
-title Chat Server Architecture
-
+title Chat System Architecture
 class ChatServer {
   - ip_addr: str
   - port: int
@@ -124,7 +123,7 @@ ChatServer --> ChatClient: response
 
 
 @startuml
-title Chat Server Architecture
+title Chat System Architecture
 
 class ChatServer {
   - ip_addr: str
