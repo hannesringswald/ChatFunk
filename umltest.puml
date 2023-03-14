@@ -80,7 +80,6 @@ rectangle ChatClient {
   user --> UC4
   user --> UC5
 }
-
 @enduml
 
 @startuml

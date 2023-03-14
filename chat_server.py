@@ -86,7 +86,7 @@ class ChatServer:
             try:
                 client_socket.sendall(b"SHUTDOWN")
             except Exception as e:
-                print(f"Error sending SHUTDOWN to client '{client_id}': {e}")
+                print(f"Error sending SHUTDOWN to client '{client_socket}': {e}")
         self.server_socket.close()
 
     def start(self):
